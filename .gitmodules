@@ -1,0 +1,3 @@
+[submodule "animeface_detector"]
+	path = animeface_detector
+	url = https://github.com/nagadomi/lbpcascade_animeface

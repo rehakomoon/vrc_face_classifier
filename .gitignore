@@ -1,2 +1,5 @@
 init.bat
 make_env.bat
+
+.ipynb_checkpoints/
+data/
