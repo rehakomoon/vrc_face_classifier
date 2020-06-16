@@ -12,8 +12,6 @@ from tqdm import tqdm
 import itertools
 from joblib import Parallel, delayed
 
-get_ipython().run_line_magic('matplotlib', 'inline')
-
 data_path = Path.cwd() / "data"
 input_dir = data_path / "raw_data"
 output_dir = data_path / "collect_data"
