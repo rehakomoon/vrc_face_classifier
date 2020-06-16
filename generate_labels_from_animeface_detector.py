@@ -64,7 +64,7 @@ def output_image_with_annotation(params):
 input_image_path_list = list(input_dir.glob("*.png"))
 
 # for debugging
-input_image_path_list = input_image_path_list[:10000]
+# input_image_path_list = input_image_path_list[:10000]
 
 extracted = Parallel(n_jobs=-1, verbose=10)([delayed(extract_face_areas)(p) for p in input_image_path_list])
 extracted = zip(input_image_path_list, extracted)
