@@ -13,7 +13,7 @@ from joblib import Parallel, delayed
 from tqdm import tqdm
 import shutil
 
-get_ipython().run_line_magic('matplotlib', 'inline')
+#get_ipython().run_line_magic('matplotlib', 'inline')
 
 data_path = Path.cwd() / "data"
 input_dir = data_path / "collect_data"
