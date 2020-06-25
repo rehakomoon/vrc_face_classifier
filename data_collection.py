@@ -12,6 +12,8 @@ from tqdm import tqdm
 import itertools
 from joblib import Parallel, delayed
 
+get_ipython().run_line_magic('matplotlib', 'inline')
+
 data_path = Path.cwd() / "data"
 input_dir = data_path / "raw_data"
 output_dir = data_path / "collect_data"
@@ -59,6 +61,8 @@ def process(load_path):
     if (load_image is None):
         return
     assert load_image.shape[2] == 3
+
+    load_image = cv2.resize(load_image, (load_image.shape[1] // 2, load_image.shape[0] // 2))
     
     images = [load_image, cv2.flip(load_image, 1)]
     images = [[image,
@@ -77,7 +81,11 @@ def process(load_path):
         output_path = output_dir / f"{output_path_prefix}_{i}.png"
         cv2.imwrite(str(output_path), image)
 
+# for debugging
+#target_paths = target_paths[:1000]
+
 Parallel(n_jobs=-1, verbose=10)([delayed(process)(target_path) for target_path in target_paths])
+None
 
 
 # In[ ]:

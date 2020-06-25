@@ -15,6 +15,8 @@ import shutil
 import math
 import random
 
+get_ipython().run_line_magic('matplotlib', 'inline')
+
 data_path = Path.cwd() / "data"
 input_dir = data_path / "labeled_data"
 output_dir = data_path / "cropped_data"
@@ -30,7 +32,7 @@ def process(txt_path, png_path):
         lines = f.readlines()
     lines = [l.strip() for l in lines]
     data = [l.split(" ") for l in lines]
-    data = [[float(e) for e in d] for d in data]
+    data = [[int(e) for e in d] for d in data]
 
     load_img = cv2.imread(str(png_path), cv2.IMREAD_COLOR)
     image_h, image_w, _ = load_img.shape
@@ -41,11 +43,7 @@ def process(txt_path, png_path):
 
     for i, area in enumerate(data):
         assert len(area) == 5
-        _, x0, y0, x1, y1 = area
-        x0 = max(0, min(image_w, int(x0*image_w)))
-        y0 = max(0, min(image_h, int(y0*image_h)))
-        x1 = max(0, min(image_w, int(x1*image_w)))
-        y1 = max(0, min(image_h, int(y1*image_h)))
+        x0, y0, x1, y1, _ = area
 
         crop_image = load_img[y0:y1, x0:x1, :]
         if (False):
@@ -91,6 +89,9 @@ pos = [(y*resize_image_size[0], x*resize_image_size[1]) for y, x in pos]
 export_image = np.zeros((resize_image_size[1]*num_image_col, resize_image_size[0]*num_image_col, 3), dtype=np.uint8)
 for image, p in zip(images, pos):
     export_image[p[0]:p[0]+resize_image_size[0], p[1]:p[1]+resize_image_size[1], :] = image
+
+plt.imshow(cv2.cvtColor(export_image, cv2.COLOR_BGR2RGB))
+plt.show()
 
 cv2.imwrite(str(data_path / "faces.png"), export_image)
 None
