@@ -15,7 +15,7 @@ import shutil
 import math
 import random
 
-#get_ipython().run_line_magic('matplotlib', 'inline')
+# %matplotlib inline
 
 data_path = Path.cwd() / "data"
 input_dir = data_path / "labeled_data"
@@ -30,6 +30,7 @@ output_dir.mkdir(exist_ok=True)
 def process(txt_path, png_path):
     with open(txt_path, "r") as f:
         lines = f.readlines()
+    lines = lines[2:]
     lines = [l.strip() for l in lines]
     data = [l.split(" ") for l in lines]
     data = [[int(e) for e in d] for d in data]
@@ -71,7 +72,7 @@ def read_and_resize(image_path, resize_image_size):
     image = cv2.resize(image, resize_image_size)
     return image
 
-resize_image_size = (64, 64)
+resize_image_size = (32, 32)
 image_path_list = list(output_dir.glob("*.png"))
 random.shuffle(image_path_list)
 # for debugging
