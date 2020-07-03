@@ -63,7 +63,7 @@ def process(image_path):
         areas = [(x, y, x+w, y+h) for (x, y, w, h) in faces]
 
         if (len(areas) <= 0):
-            return
+            continue
 
         annotation_text = [" ".join([str(d) for d in l]) + " 1" for l in areas]
         annotation_text = "\n".join(annotation_text)
