@@ -57,7 +57,7 @@ annotations = Parallel(n_jobs=-1, verbose=10)([delayed(process)(p) for p in inpu
 annotations = list(itertools.chain.from_iterable(annotations))
 
 annotation_path = output_dir / "annotation.txt"
-annotations = "\n#\n".join(annotations)
+annotations = "#\n" + "\n#\n".join(annotations)
 with open(annotation_path, "w") as f:
     f.write(annotations)
 
