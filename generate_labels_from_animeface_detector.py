@@ -28,14 +28,12 @@ output_dir.mkdir(exist_ok=True)
 
 
 def process(image_path):
-    load_img = cv2.imread(str(image_path), cv2.IMREAD_COLOR)
+    load_image = cv2.imread(str(image_path), cv2.IMREAD_COLOR)
     
-    images = [load_img, cv2.flip(load_img, 1)]
-    images = [[image,
-               cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE),
-               cv2.rotate(image, cv2.ROTATE_180),
-               cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)] for image in images]
-    images = list(itertools.chain.from_iterable(images))
+    images = [load_image,
+              cv2.rotate(load_image, cv2.ROTATE_90_CLOCKWISE),
+              cv2.rotate(load_image, cv2.ROTATE_180),
+              cv2.rotate(load_image, cv2.ROTATE_90_COUNTERCLOCKWISE)]
     
     cascade = cv2.CascadeClassifier(str(cascade_file_path))
 
@@ -62,8 +60,8 @@ def process(image_path):
         #normalized_areas = [(x/image_w, y/image_h, (x+w)/image_w, (y+h)/image_h) for (x, y, w, h) in faces]
         areas = [(x, y, x+w, y+h) for (x, y, w, h) in faces]
 
-        if (len(areas) <= 0):
-            continue
+        #if (len(areas) <= 0):
+        #    continue
 
         annotation_text = [" ".join([str(d) for d in l]) + " 1" for l in areas]
         annotation_text = "\n".join(annotation_text)
