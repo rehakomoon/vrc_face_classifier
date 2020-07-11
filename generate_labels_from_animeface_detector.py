@@ -18,7 +18,7 @@ import itertools
 
 data_path = Path.cwd() / "data"
 input_dir = data_path / "collect_data"
-output_dir = data_path / "labeled_data"
+output_dir = data_path / "labeled_data_fine"
 cascade_file_path = Path.cwd() / "animeface_detector/lbpcascade_animeface.xml"
 
 output_dir.mkdir(exist_ok=True)
@@ -45,7 +45,7 @@ def process(image_path):
         gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         gray_img = cv2.equalizeHist(gray_img)
 
-        faces = cascade.detectMultiScale(gray_img, scaleFactor = 1.1, minNeighbors = 5, minSize = (32, 32))
+        faces = cascade.detectMultiScale(gray_img, scaleFactor = 1.01, minNeighbors = 5, minSize = (32, 32))
 
         if (False):
             plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
