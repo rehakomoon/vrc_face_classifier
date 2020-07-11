@@ -25,14 +25,12 @@ output_dir.mkdir(exist_ok=True)
 
 
 def process(image_path):
-    load_img = cv2.imread(str(image_path), cv2.IMREAD_COLOR)
+    load_image = cv2.imread(str(image_path), cv2.IMREAD_COLOR)
     
-    images = [load_img, cv2.flip(load_img, 1)]
-    images = [[image,
-               cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE),
-               cv2.rotate(image, cv2.ROTATE_180),
-               cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)] for image in images]
-    images = list(itertools.chain.from_iterable(images))
+    images = [load_image,
+              cv2.rotate(load_image, cv2.ROTATE_90_CLOCKWISE),
+              cv2.rotate(load_image, cv2.ROTATE_180),
+              cv2.rotate(load_image, cv2.ROTATE_90_COUNTERCLOCKWISE)]
     
     annotations = []
 

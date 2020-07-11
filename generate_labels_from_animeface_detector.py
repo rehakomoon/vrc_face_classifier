@@ -60,14 +60,14 @@ def process(image_path):
         #normalized_areas = [(x/image_w, y/image_h, (x+w)/image_w, (y+h)/image_h) for (x, y, w, h) in faces]
         areas = [(x, y, x+w, y+h) for (x, y, w, h) in faces]
 
-        #if (len(areas) <= 0):
-        #    continue
+        if (len(areas) <= 0):
+            continue
 
         annotation_text = [" ".join([str(d) for d in l]) + " 1" for l in areas]
         annotation_text = "\n".join(annotation_text)
         annotation_text = f"{image.shape[1]} {image.shape[0]}\n{len(areas)}\n{annotation_text}"
         
-        cv2.imwrite(str(output_png_path), image)
+        #cv2.imwrite(str(output_png_path), image)
 
         with open(output_txt_path, "w") as f:
             f.write(annotation_text)
