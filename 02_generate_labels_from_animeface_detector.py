@@ -18,7 +18,7 @@ import itertools
 
 data_path = Path.cwd() / "data"
 input_dir = data_path / "collect_data"
-output_dir = data_path / "labeled_data_fine"
+output_dir = data_path / "labeled_data"
 cascade_file_path = Path.cwd() / "animeface_detector/lbpcascade_animeface.xml"
 
 output_dir.mkdir(exist_ok=True)

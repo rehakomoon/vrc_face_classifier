@@ -21,7 +21,6 @@ output_dir = data_path / "collect_data"
 output_dir.mkdir(exist_ok=True)
 
 target_dirs = [d for d in input_dir.iterdir() if d.is_dir()]
-#target_dirs = [d for d in input_dir.iterdir() if d.is_dir() if (d.stem in ["hakomoon", "aoinu"])]
 target_paths = [[(p, f"{d.stem}_{i:08}.png") for i, p in enumerate(d.glob("*.png"))] for d in target_dirs]
 target_paths = itertools.chain.from_iterable(target_paths)
 target_paths = list(target_paths)
