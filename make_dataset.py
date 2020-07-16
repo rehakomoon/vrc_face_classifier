@@ -14,8 +14,8 @@ from tqdm import tqdm
 import shutil
 
 data_path = Path.cwd() / "data"
-input_dir = data_path / "labeled_data"
-output_dir = data_path / "labeled_data"
+input_dir = data_path / "labeled_filtered_data"
+output_dir = data_path / "labeled_filtered_data"
 annotation_output_path = output_dir / "annotation.txt"
 test_annotation_output_path = output_dir / "annotation_test.txt"
 
@@ -33,7 +33,7 @@ input_path_list = [(pp, pt) for pt, pp in input_path_list if pp.exists()]
 annotations = []
 test_annotations = []
 
-for input_png_path, input_txt_path in input_path_list:
+for input_png_path, input_txt_path in tqdm(input_path_list):
     annotation = f"#\n{input_png_path.name}\n"
     with open(input_txt_path) as f:
         annotation = annotation + f.read()
