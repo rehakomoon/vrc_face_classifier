@@ -6,17 +6,18 @@
 
 from pathlib import Path
 import numpy as np
-from PIL import Image
 import cv2
-import matplotlib.pyplot as plt
 from joblib import Parallel, delayed
 from tqdm import tqdm
 import shutil
 import itertools
 
-# %matplotlib inline
+#import matplotlib.pyplot as plt
+#%matplotlib inline
 
 data_path = Path.cwd() / "data"
+#data_path = Path.cwd() / "data_tiny"
+
 input_dir = data_path / "collect_data"
 output_dir = data_path / "labeled_data"
 cascade_file_path = Path.cwd() / "animeface_detector/lbpcascade_animeface.xml"
@@ -67,8 +68,6 @@ def process(image_path):
         annotation_text = "\n".join(annotation_text)
         annotation_text = f"{image.shape[1]} {image.shape[0]}\n{len(areas)}\n{annotation_text}"
         
-        #cv2.imwrite(str(output_png_path), image)
-
         with open(output_txt_path, "w") as f:
             f.write(annotation_text)
 
@@ -77,6 +76,7 @@ input_image_path_list = list(input_dir.glob("*.png"))
 # for debugging
 # input_image_path_list = input_image_path_list[:100]
 
+# [process(p) for p in tqdm(input_image_path_list)]
 Parallel(n_jobs=-1, verbose=10)([delayed(process)(p) for p in input_image_path_list])
 print("process done.")
 

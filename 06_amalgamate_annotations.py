@@ -6,7 +6,6 @@
 
 from pathlib import Path
 import numpy as np
-from PIL import Image
 import cv2
 import matplotlib.pyplot as plt
 from joblib import Parallel, delayed
@@ -14,6 +13,8 @@ from tqdm import tqdm
 import shutil
 
 data_path = Path.cwd() / "data"
+#data_path = Path.cwd() / "data_tiny"
+
 input_dir = data_path / "labeled_filtered_data"
 output_dir = data_path / "labeled_filtered_data"
 annotation_output_path = output_dir / "annotation.txt"

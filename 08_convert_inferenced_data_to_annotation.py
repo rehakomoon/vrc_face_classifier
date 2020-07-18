@@ -13,6 +13,8 @@ import itertools
 import pickle
 
 data_path = Path.cwd() / "data"
+#data_path = Path.cwd() / "data_tiny"
+
 input_dir = data_path / "inference_data"
 output_dir = data_path / "inference_data"
 pickle_path = input_dir / "inference.pkl"
@@ -29,6 +31,8 @@ with open(pickle_path, "rb") as f:
 with open(input_annotation_path, "r") as f:
     load_annotations = f.readlines()
 
+load_data = [l[0] for l in load_data]
+
 load_annotations = "".join(load_annotations)
 #load_annotations = "#\n" + load_annotations
 
@@ -36,7 +40,6 @@ annotations = load_annotations.split("#")
 annotations = annotations[1:]
 
 annotations = [a.strip().split("\n")[0:2] for a in annotations]
-annotations = [(a[0], a[1]) for a in annotations]
 
 print("#inferenced data: ", len(load_data), ", #annotations: ", len(annotations))
 assert(len(load_data) == len(annotations))
@@ -53,7 +56,6 @@ confidence_threshold = 0.2
 for (image_filename, image_size), areas in tqdm(inferred_data):
     filename = image_filename[:-4]
     output_txt_path = output_dir / (filename + ".txt")
-    areas = areas[0]
     
     areas = [(int(x0), int(y0), int(x1), int(y1)) for (x0, y0, x1, y1, p) in areas if p > confidence_threshold]
     

@@ -10,7 +10,10 @@ from joblib import Parallel, delayed
 from tqdm import tqdm
 import shutil
 
+import utils
+
 data_path = Path.cwd() / "data"
+#data_path = Path.cwd() / "data_tiny"
 
 input_txt_dir_1 = data_path / "labeled_data"
 input_txt_dir_2 = data_path / "inference_data"
@@ -60,38 +63,33 @@ print("copy done.")
 # In[ ]:
 
 
-def parse_annotation_file(lines):
-    lines = [l.strip() for l in lines]
-    image_size_str = lines[0]
-    num_area = int(lines[1])
-    areas = lines[2:]
-    assert(num_area == len(areas))
-    #areas = [area.split(" ") for area in areas]
-    #areas = [(int(x0), int(y0), int(x1), int(y1)) for x0, y0, x1, y1, _ in areas]
-    return image_size_str, areas
-
-def process_merge(params):
+def process(params):
     input_txt_path_1, input_txt_path_2, output_txt_path = params
     
     with open(input_txt_path_1, "r") as f:
         lines = f.readlines()
-    image_size_str_1, areas_1 = parse_annotation_file(lines)
+    image_size_1, areas_1 = utils.parse_annotation(lines)
     
     with open(input_txt_path_2, "r") as f:
         lines = f.readlines()
-    image_size_str_2, areas_2 = parse_annotation_file(lines)
+    image_size_2, areas_2 = utils.parse_annotation(lines)
     
-    assert(image_size_str_1 == image_size_str_2)
+    assert(image_size_1 == image_size_2)
+    image_size = image_size_1
+    
     areas = areas_1 + areas_2
+    num_areas = len(areas)
+    
+    areas = [f"{x0} {y0} {x1} {y1} 1" for x0, y0, x1, y1 in areas]
     areas = "\n".join(areas)
     
-    annotation = f"{image_size_str_1}\n{areas}"
+    annotation = f"{image_size[0]} {image_size[1]}\n{num_areas}\n{areas}"
     
     with open(output_txt_path, "w") as f:
         f.write(annotation)
 
-#[process_merge(params) for params in tqdm(merge_file_list)]
-Parallel(n_jobs=-1, verbose=10)([delayed(process_merge)(p) for p in merge_file_list])
+#[process(params) for params in tqdm(merge_file_list)]
+Parallel(n_jobs=-1, verbose=10)([delayed(process)(p) for p in merge_file_list])
 print("merge done.")
 
 
