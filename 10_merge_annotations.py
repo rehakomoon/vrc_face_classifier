@@ -9,14 +9,14 @@ import numpy as np
 from joblib import Parallel, delayed
 from tqdm import tqdm
 import shutil
+import itertools
 
 import utils
 
 data_path = Path.cwd() / "data"
 #data_path = Path.cwd() / "data_tiny"
 
-input_txt_dir_1 = data_path / "labeled_data"
-input_txt_dir_2 = data_path / "inference_data"
+input_txt_dirs = [data_path / "labeled_data", data_path / "inference_data"]
 output_dir = data_path / "merged_data"
 
 output_dir.mkdir(exist_ok=True)
@@ -25,31 +25,32 @@ output_dir.mkdir(exist_ok=True)
 # In[ ]:
 
 
-input_txt_list_1 = input_txt_dir_1.glob("*.txt")
-input_txt_list_2 = input_txt_dir_2.glob("*.txt")
-input_txt_list_1 = [p.stem for p in input_txt_list_1]
-input_txt_list_2 = [p.stem for p in input_txt_list_2]
+input_txt_lists = [(d.glob("*.txt"), i) for i, d in enumerate(input_txt_dirs)]
+input_txt_lists = [[(p.stem, i) for p in l] for l, i in input_txt_lists]
+input_txt_lists = itertools.chain.from_iterable(input_txt_lists)
+input_txt_lists = [(p, i) for (p, i) in input_txt_lists if len(p.split("_")) == 3]
 
-# for debugging
-# input_txt_list_1 = input_txt_list_1[:10000]
-# input_txt_list_2 = input_txt_list_2[:10000]
+#input_txt_lists = list(input_txt_lists)
+#input_txt_list_2 = [p.stem for p in input_txt_list_2]
+#input_txt_lists
 
 
 # In[ ]:
 
 
-input_txt_list_shared = [p for p in tqdm(input_txt_list_1) if (p in input_txt_list_2)]
-input_txt_list_1_unique = [p for p in tqdm(input_txt_list_1) if (p not in input_txt_list_shared)]
-input_txt_list_2_unique = [p for p in tqdm(input_txt_list_2) if (p not in input_txt_list_shared)]
+keys = {k for k, _ in input_txt_lists}
+annotation_txt_lists = {k: [] for k in keys}
 
-print("#1_unique: ", len(input_txt_list_1_unique),
-      ", #2_unique: ", len(input_txt_list_2_unique),
-      ", #shared: ", len(input_txt_list_shared))
+for filename, idx in input_txt_lists:
+    annotation_txt_lists[filename].append(idx)
 
-copy_file_list_1 = [(input_txt_dir_1 / (p + ".txt"), output_dir / (p + ".txt")) for p in input_txt_list_1_unique]
-copy_file_list_2 = [(input_txt_dir_2 / (p + ".txt"), output_dir / (p + ".txt")) for p in input_txt_list_2_unique]
-copy_file_list = copy_file_list_1 + copy_file_list_2
-merge_file_list = [(input_txt_dir_1 / (p + ".txt"), input_txt_dir_2 / (p + ".txt"), output_dir / (p + ".txt")) for p in input_txt_list_shared]
+annotation_txt_lists = [(k, sorted(list(set(v)))) for k, v in annotation_txt_lists.items()]
+
+input_txt_list_unique = [(filename+".txt", input_txt_dirs[idx_list[0]]) for filename, idx_list in tqdm(annotation_txt_lists) if len(idx_list) == 1]
+input_txt_list_shared = [(filename+".txt", [input_txt_dirs[i] for i in idx_list]) for filename, idx_list in tqdm(annotation_txt_lists) if len(idx_list) > 1]
+
+copy_file_list = [(src_dir / filename, output_dir / filename) for filename, src_dir in input_txt_list_unique]
+merge_file_list = [([d / filename for d in src_dirs], output_dir / filename) for filename, src_dirs in input_txt_list_shared]
 
 
 # In[ ]:
@@ -64,20 +65,24 @@ print("copy done.")
 
 
 def process(params):
-    input_txt_path_1, input_txt_path_2, output_txt_path = params
+    input_txt_paths, output_txt_path = params
+    assert(len(input_txt_paths) > 0)
     
-    with open(input_txt_path_1, "r") as f:
-        lines = f.readlines()
-    image_size_1, areas_1 = utils.parse_annotation(lines)
+    image_size_list = []
+    areas_list = []
     
-    with open(input_txt_path_2, "r") as f:
-        lines = f.readlines()
-    image_size_2, areas_2 = utils.parse_annotation(lines)
+    for input_txt_path in input_txt_paths:
+        with open(input_txt_path, "r") as f:
+            lines = f.readlines()
+        image_size, areas = utils.parse_annotation(lines)
+        image_size_list.append(image_size)
+        areas_list.append(areas)
     
-    assert(image_size_1 == image_size_2)
-    image_size = image_size_1
+    image_size = image_size_list[0]
+    for s in image_size_list:
+        assert(s == image_size)
     
-    areas = areas_1 + areas_2
+    areas = list(itertools.chain.from_iterable(areas_list))
     num_areas = len(areas)
     
     areas = [f"{x0} {y0} {x1} {y1} 1" for x0, y0, x1, y1 in areas]
