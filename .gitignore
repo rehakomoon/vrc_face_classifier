@@ -3,3 +3,5 @@ make_env.bat
 
 .ipynb_checkpoints/
 data/
+data_tiny/
+
