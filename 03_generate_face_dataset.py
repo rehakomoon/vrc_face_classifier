@@ -19,9 +19,12 @@ import utils
 data_path = Path.cwd() / "data"
 #data_path = Path.cwd() / "data_tiny"
 
-input_label_dir = data_path / "labeled_data"
+#input_label_dir = data_path / "labeled_data"
+#input_png_dir = data_path / "collect_data"
+#output_dir = data_path / "face_data"
+input_label_dir = data_path / "integrated_data"
 input_png_dir = data_path / "collect_data"
-output_dir = data_path / "face_data"
+output_dir = data_path / "face_data_2"
 
 output_dir.mkdir(exist_ok=True)
 
